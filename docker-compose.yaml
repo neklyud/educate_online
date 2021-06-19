@@ -1,0 +1,36 @@
+version: '3.9'
+
+services: 
+    backend:
+        build: backend/
+        command: bash run.sh
+        expose: 
+            - "5000"
+        networks: 
+            - default
+        environment: 
+            - PYTHONPATH=/app/
+    frontend:
+        build: frontend/
+        command: http-server dist
+        expose: 
+            - "8080"
+        networks: 
+            - default
+        depends_on: 
+            - backend
+
+    nginx:
+        image: nginx:latest
+        ports:
+            - 8000:80
+        volumes:
+            - ./nginx:/etc/nginx/conf.d/
+        depends_on: 
+            - frontend
+            - backend
+        networks: 
+            - default
+
+networks:
+    default:
